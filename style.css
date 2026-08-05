@@ -1,0 +1,426 @@
+/* =====================================================
+   AMR Error Log Visualizer — Industrial Design System
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&family=Hanken+Grotesk:wght@400;500;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Design Tokens ─────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --surface:                  #f9faf5;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low:    #f3f4ef;
+  --surface-container:        #edeee9;
+  --surface-container-high:   #e7e9e4;
+  --surface-container-highest:#e2e3de;
+
+  /* On-surface */
+  --on-surface:         #1a1c19;
+  --on-surface-variant: #414845;
+
+  /* Outline */
+  --outline:         #717975;
+  --outline-variant: #c1c8c4;
+  --neutral-outline: #cccccc;
+
+  /* Brand */
+  --primary:             #00140e;
+  --primary-container:   #062b22;
+  --on-primary:          #ffffff;
+  --secondary:           #406659;
+  --secondary-container: #c2ecdb;
+  --on-secondary:        #ffffff;
+
+  /* Accent greens */
+  --grass-green:   #6B9E5A;
+  --healthy-green: #2E7D32;
+  --tertiary-fixed:#d0ed9a;
+
+  /* Error */
+  --error:           #ba1a1a;
+  --error-container: #ffdad6;
+  --on-error:        #ffffff;
+
+  /* Spacing */
+  --header-height:      56px;
+  --container-padding:  1.5rem;
+  --grid-gap:           1.25rem;
+
+  /* Shape */
+  --radius-sm:  0.125rem;
+  --radius:     0.25rem;
+  --radius-md:  0.375rem;
+  --radius-lg:  0.5rem;
+  --radius-xl:  0.75rem;
+  --radius-full: 9999px;
+
+  /* Shadow (level-1 only) */
+  --shadow-1: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ── Base ──────────────────────────────────────────── */
+body {
+  font-family: 'Hanken Grotesk', sans-serif;
+  background: var(--surface);
+  color: var(--on-surface);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* ── Header / Top Nav ──────────────────────────────── */
+header {
+  height: var(--header-height);
+  background: var(--primary);
+  color: var(--on-primary);
+  padding: 0 var(--container-padding);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header .logo {
+  font-size: 22px;
+}
+
+header h1 {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--on-primary);
+}
+
+header .subtitle {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--tertiary-fixed);
+  letter-spacing: 0.05em;
+}
+
+/* ── Toolbar ───────────────────────────────────────── */
+.toolbar {
+  padding: 10px var(--container-padding);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  background: var(--surface-container-low);
+  border-bottom: 1px solid var(--outline-variant);
+}
+
+.toolbar-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--on-surface-variant);
+}
+
+/* ── Form Controls ─────────────────────────────────── */
+select,
+input[type="datetime-local"] {
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--neutral-outline);
+  color: var(--on-surface);
+  padding: 6px 10px;
+  border-radius: 2px;        /* sharp "form-like" */
+  font-size: 13px;
+  font-family: 'Hanken Grotesk', sans-serif;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+select:hover,
+select:focus,
+input:focus {
+  border-color: var(--grass-green);
+  outline: none;
+}
+
+/* ── Buttons ───────────────────────────────────────── */
+.btn {
+  border: 1px solid var(--neutral-outline);
+  background: transparent;
+  color: var(--on-surface);
+  padding: 6px 16px;
+  border-radius: var(--radius);
+  font-size: 11px;
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn:hover {
+  background: #f3f4ef;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background: var(--primary-container);
+  border-color: var(--primary-container);
+}
+
+.btn-green {
+  background: var(--grass-green);
+  color: var(--on-primary);
+  border-color: var(--grass-green);
+}
+
+.btn-green:hover {
+  background: var(--healthy-green);
+  border-color: var(--healthy-green);
+}
+
+/* ── Drop Zone ─────────────────────────────────────── */
+#drop-zone {
+  margin: 12px var(--container-padding);
+  border: 2px dashed var(--outline-variant);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: center;
+  color: var(--on-surface-variant);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+#drop-zone.drag {
+  border-color: var(--grass-green);
+  background: rgba(107,158,90,0.06);
+}
+
+/* ── Filter Panel ──────────────────────────────────── */
+.filter-panel {
+  padding: 14px var(--container-padding);
+  background: var(--surface-container-low);
+  border-bottom: 1px solid var(--outline-variant);
+  display: none;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.filter-group > label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--on-surface-variant);
+}
+
+.multi-box {
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--neutral-outline);
+  border-radius: 2px;
+  height: 90px;
+  overflow-y: auto;
+  padding: 4px 6px;
+}
+
+.multi-box label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.multi-box label:hover {
+  background: var(--surface-container);
+}
+
+.multi-box input[type="checkbox"] {
+  accent-color: var(--grass-green);
+}
+
+.time-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--on-surface-variant);
+}
+
+/* ── Status Message ────────────────────────────────── */
+#status-msg {
+  text-align: center;
+  padding: 52px var(--container-padding);
+  color: var(--on-surface-variant);
+  font-size: 14px;
+}
+
+/* ── KPI / Stat Cards ──────────────────────────────── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--grid-gap);
+  padding: var(--container-padding) var(--container-padding) 0;
+}
+
+.stat-card {
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-sm);
+  border-top: 4px solid var(--grass-green);
+  box-shadow: var(--shadow-1);
+  padding: 16px 20px;
+}
+
+.stat-card.c-error {
+  border-top-color: var(--error);
+}
+
+.stat-card.c-green {
+  border-top-color: var(--healthy-green);
+}
+
+.stat-card.c-teal {
+  border-top-color: var(--secondary);
+}
+
+.stat-card .lbl {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--on-surface-variant);
+  margin-bottom: 6px;
+}
+
+.stat-card .val {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 44px;
+  color: var(--on-surface);
+}
+
+/* ── Charts Grid ───────────────────────────────────── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--grid-gap);
+  padding: var(--container-padding);
+}
+
+.chart-card {
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-sm);
+  border-top: 4px solid var(--grass-green);
+  box-shadow: var(--shadow-1);
+  padding: 18px 20px;
+}
+
+.chart-card.full {
+  grid-column: 1 / -1;
+}
+
+.chart-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--outline-variant);
+  padding-bottom: 10px;
+}
+
+.chart-head h2 {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--on-surface-variant);
+}
+
+.save-btn {
+  background: transparent;
+  border: 1px solid var(--neutral-outline);
+  color: var(--on-surface-variant);
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  font-family: 'Hanken Grotesk', sans-serif;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.save-btn:hover {
+  border-color: var(--grass-green);
+  color: var(--grass-green);
+  background: rgba(107,158,90,0.06);
+}
+
+.chart-wrap {
+  position: relative;
+  height: 280px;
+}
+
+.chart-wrap.tall {
+  height: 340px;
+}
+
+/* ── Toast ─────────────────────────────────────────── */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--healthy-green);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ── Footer ────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 16px;
+  color: var(--on-surface-variant);
+  font-size: 11px;
+  border-top: 1px solid var(--outline-variant);
+  margin-top: 4px;
+}
+
+footer code {
+  font-family: monospace;
+  background: var(--surface-container);
+  padding: 1px 5px;
+  border-radius: 2px;
+}

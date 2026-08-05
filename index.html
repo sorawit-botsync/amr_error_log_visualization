@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMR Error Log Visualizer</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────── -->
+<header>
+  <span class="logo">🤖</span>
+  <div>
+    <h1>AMR Error Log Visualizer</h1>
+    <div class="subtitle">Fleet Error Analysis — TCF Commissioning</div>
+  </div>
+</header>
+
+<!-- ── Toolbar ────────────────────────────────────── -->
+<div class="toolbar">
+  <span class="toolbar-label">File:</span>
+  <select id="file-select"><option value="">-- select CSV --</option></select>
+  <button class="btn btn-primary" onclick="loadSelected()">Load</button>
+  <button class="btn btn-green" onclick="document.getElementById('manual-upload').click()">⬆ Upload</button>
+  <input type="file" id="manual-upload" accept=".csv" style="display:none" onchange="handleUpload(this)">
+  <span id="file-label" class="toolbar-label" style="margin-left:4px"></span>
+  <button id="filter-toggle" class="btn" onclick="toggleFilters()" style="display:none">🔍 Filters</button>
+  <button id="reset-btn"     class="btn" onclick="resetAll()"      style="display:none">↺ Reset</button>
+</div>
+
+<!-- ── Drop Zone ──────────────────────────────────── -->
+<div id="drop-zone" onclick="document.getElementById('manual-upload').click()">
+  ⬇️ Drop a CSV file here or click to browse
+</div>
+
+<!-- ── Filter Panel ───────────────────────────────── -->
+<div class="filter-panel" id="filter-panel">
+  <div class="filter-group">
+    <label>🤖 Robot Name</label>
+    <div class="multi-box" id="robot-checks"></div>
+  </div>
+  <div class="filter-group">
+    <label>⚠️ Error Code</label>
+    <div class="multi-box" id="code-checks"></div>
+  </div>
+  <div class="filter-group">
+    <label>🗺️ Map Name</label>
+    <div class="multi-box" id="map-checks"></div>
+  </div>
+  <div class="filter-group">
+    <label>✅ Status</label>
+    <div class="multi-box" id="status-checks"></div>
+  </div>
+  <div class="filter-group" style="min-width:260px">
+    <label>📅 Time Range</label>
+    <div class="time-row"><span>From:</span><input type="datetime-local" id="time-from"></div>
+    <div class="time-row" style="margin-top:6px"><span>To &nbsp;:</span><input type="datetime-local" id="time-to"></div>
+    <button class="btn btn-primary" onclick="applyFilter()" style="margin-top:8px">Apply Filters</button>
+  </div>
+</div>
+
+<!-- ── Status placeholder ─────────────────────────── -->
+<div id="status-msg">Select or upload a CSV file to begin visualization.</div>
+
+<!-- ── Dashboard ──────────────────────────────────── -->
+<div id="dashboard" style="display:none">
+
+  <!-- KPI cards -->
+  <div class="stats-row" id="stat-cards"></div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+
+    <div class="chart-card full">
+      <div class="chart-head">
+        <h2>Error Code Frequency — Top 20</h2>
+        <button class="save-btn" onclick="saveChart('chart-error-code','error_code_histogram')">💾 Save</button>
+      </div>
+      <div class="chart-wrap tall"><canvas id="chart-error-code"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <h2>Errors per Robot</h2>
+        <button class="save-btn" onclick="saveChart('chart-robot','robot_errors')">💾 Save</button>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-robot"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <h2>Errors per Map</h2>
+        <button class="save-btn" onclick="saveChart('chart-map','map_errors')">💾 Save</button>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-map"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <h2>Status Distribution</h2>
+        <button class="save-btn" onclick="saveChart('chart-status','status_dist')">💾 Save</button>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-status"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <h2>Resolution Time Distribution (seconds)</h2>
+        <button class="save-btn" onclick="saveChart('chart-restime','resolution_time')">💾 Save</button>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-restime"></canvas></div>
+    </div>
+
+    <div class="chart-card full">
+      <div class="chart-head">
+        <h2>Errors Over Time — Hourly</h2>
+        <button class="save-btn" onclick="saveChart('chart-timeline','errors_timeline')">💾 Save</button>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-timeline"></canvas></div>
+    </div>
+
+  </div>
+</div><!-- /dashboard -->
+
+<footer>
+  AMR Error Log Visualizer &mdash; reads from <code>datas/</code> &mdash; saves to <code>outputs/</code>
+</footer>
+
+<div id="toast">✅ Image saved!</div>
+
+<script src="app.js"></script>
+</body>
+</html>
