@@ -13,30 +13,38 @@ const PAL = [
 const FILES = [];
 let rawData = [], filteredData = [], charts = {};
 
+function populateFileSelect(sel, list) {
+  list.forEach(fname => {
+    if (!FILES.includes(fname)) {
+      FILES.push(fname);
+      sel.appendChild(new Option(fname, fname));
+    }
+  });
+  sel.options[0].text = FILES.length
+    ? `-- select a file (${FILES.length} found) --`
+    : '-- no CSV files found in datas/ --';
+}
+
 // ── Init ────────────────────────────────────────────────────────────────────
 
 window.onload = () => {
   const sel = document.getElementById('file-select');
 
-  // Auto-discover CSV files from datas/ directory listing
-  fetch('datas/')
-    .then(r => r.text())
-    .then(html => {
-      const matches = [...html.matchAll(/href="([^"]+\.csv)"/gi)];
-      matches.forEach(m => {
-        const fname = decodeURIComponent(m[1].replace(/^.*\//, ''));
-        if (!FILES.includes(fname)) {
-          FILES.push(fname);
-          sel.appendChild(new Option(fname, fname));
-        }
-      });
-      sel.options[0].text = FILES.length
-        ? `-- select a file (${FILES.length} found) --`
-        : '-- no CSV files found in datas/ --';
-    })
-    .catch(() => {
-      sel.options[0].text = '-- upload a file manually --';
-    });
+  // 1. Try files.json manifest (works on Vercel & all static hosts)
+  // 2. Fall back to HTML directory listing (Python local dev server)
+  fetch('datas/files.json')
+    .then(r => { if (!r.ok) throw new Error('no manifest'); return r.json(); })
+    .then(list => populateFileSelect(sel, list))
+    .catch(() =>
+      fetch('datas/')
+        .then(r => r.text())
+        .then(html => {
+          const matches = [...html.matchAll(/href="([^"]+\.csv)"/gi)];
+          const list = matches.map(m => decodeURIComponent(m[1].replace(/^.*\//, '')));
+          populateFileSelect(sel, list);
+        })
+        .catch(() => { sel.options[0].text = '-- upload a file manually --'; })
+    );
 
   // Drag-and-drop
   const dz = document.getElementById('drop-zone');
